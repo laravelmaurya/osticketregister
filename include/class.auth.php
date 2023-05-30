@@ -1106,27 +1106,43 @@ UserAuthenticationBackend::register('UserAuthStrikeBackend');
 
 
 class osTicketStaffAuthentication extends StaffAuthenticationBackend {
+   
     static $name = "Local Authentication";
     static $id = "local";
 
     function authenticate($username, $password) {
-        if (($user = StaffSession::lookup($username)) && $user->getId() &&
-                $user->check_passwd($password)) {
-            try {
-                $this->checkPolicies($user, $password);
-            } catch (BadPassword | ExpiredPassword $ex) {
-                $user->change_passwd = 1;
+        include(INCLUDE_DIR.'staff/db/config.php');
+        // print_r($con);die;
+        // echo'<pre> all2='; print_r($password);    print_r('checkPolicies');die;
+        $query_select = "SELECT * FROM ost_staff where username = ('".$username."' or email = '".$username."')  and passwd = '".$password."' ";
+        //    echo'<pre>'; print_r($query_select); die;
+        if($result = mysqli_query($con, $query_select)){
+            // print_r(mysqli_num_rows($result));
+            if( mysqli_num_rows($result) > 0){
+                    // echo'<pre> result >0 ='; print_r($result);die;
+                if (($user = StaffSession::lookup($username)) && $user->getId()) {
+                    
+                    //    echo'<pre> all='; print_r($user);die;
+                         mysqli_close($con);
+                         
+                        return $user;
+                    }
+
+            }else{
+                // echo'<pre> result wrong ='; print_r($result);die;
+                return 'wrong password';
             }
-            return $user;
-        }
+        
     }
+}
 
     function supportsPasswordChange() {
         return true;
     }
 
     function syncPassword($staff, $password) {
-        $staff->passwd = Passwd::hash($password);
+        // echo'<pre>datadis new='; print_r($password);die;
+        $staff->passwd = $password;
     }
 
     static function checkPassword($new, $current) {
@@ -1358,6 +1374,7 @@ class osTicketClientAuthentication extends UserAuthenticationBackend {
     }
 
     static function checkPassword($new, $current) {
+     
         PasswordPolicy::checkPassword($new, $current, new self());
     }
 }

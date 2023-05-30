@@ -6,7 +6,7 @@ $info=($_POST && $errors)?Format::htmlchars($_POST):array('prefix'=>'ost_','dbho
     <h1><?php echo __('osTicket Basic Installation'); ?></h1>
         <p><?php echo __('Please fill out the information below to continue your osTicket installation. All fields are required.');?></p>
             <font class="error"><strong><?php echo $errors['err']; ?></strong></font>
-            <form action="install.php" method="post" id="install">
+            <form  action="install.php" method="post" id="install">
                 <input type="hidden" name="s" value="install">
                 <h4 class="head system"><?php echo __('System Settings');?></h4>
                 <span class="subhead"><?php echo __('The URL of your helpdesk, its name, and the default system email address');?></span>
@@ -67,16 +67,19 @@ $info=($_POST && $errors)?Format::htmlchars($_POST):array('prefix'=>'ost_','dbho
                     <font class="error"><?php echo $errors['username']; ?></font>
                 </div>
                 <div class="row">
-                    <label><?php echo __('Password');?>:</label>
-                    <input type="password" name="passwd" size="45" tabindex="7" value="<?php echo $info['passwd']; ?>" autocomplete="off">
+                    <label><?php echo __('Password');?>:</label>                
+                    <input type="password"  id="pass_register" size="45" tabindex="7">
                     <a class="tip" href="#password"><i class="icon-question-sign help-tip"></i></a>
                     <font class="error"><?php echo $errors['passwd']; ?></font>
+                    <input type="hidden" name="passwd" id="passwd">
+  
                 </div>
                 <div class="row">
                     <label><?php echo __('Retype Password');?>:</label>
-                    <input type="password" name="passwd2" size="45" tabindex="8" value="<?php echo $info['passwd2']; ?>">
-                    <a class="tip" href="#password2"><i class="icon-question-sign help-tip"></i></a>
+                    <input type="password"   id="retype_password" size="45" tabindex="8" >
+                    <a class="tip"href="#password2"><i class="icon-question-sign help-tip"></i></a>
                     <font class="error"><?php echo $errors['passwd2']; ?></font>
+                    <input type="hidden" name="passwd2" id="passwd2">
                 </div>
 
                 <h4 class="head database"><?php echo __('Database Settings');?></h4>
@@ -113,7 +116,7 @@ $info=($_POST && $errors)?Format::htmlchars($_POST):array('prefix'=>'ost_','dbho
                 </div>
                 <br>
                 <div id="bar">
-                    <input class="btn" type="submit" value="<?php echo __('Install Now');?>" tabindex="14">
+                    <input  class="btn" type="submit" value="<?php echo __('Install Now');?>" tabindex="14">
                 </div>
 
                 <input type="hidden" name="timezone" id="timezone"/>
@@ -127,3 +130,37 @@ $info=($_POST && $errors)?Format::htmlchars($_POST):array('prefix'=>'ost_','dbho
         <h4><?php echo __('Doing stuff!');?></h4>
         <?php echo __('Please wait... while we install your new support ticket system!');?>
     </div>
+<script>
+$(document).ready(function(){
+    $("#pass_register").change(function(){
+
+    
+                var passwordInput = document.getElementById("pass_register").value;
+                var encodedPasswordInput = document.getElementById("passwd");
+
+                const encoder = new TextEncoder();
+                const data = encoder.encode(passwordInput);
+    
+                var encodedData = CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+                console.log(passwordInput+'\n'+encodedData);
+        
+                encodedPasswordInput.value = encodedData;
+    });
+});
+  
+$(document).ready(function(){
+    $("#retype_password").change(function(){
+    
+                var passwordInput = document.getElementById("retype_password").value;
+                var encodedPasswordInput = document.getElementById("passwd2");
+
+                const encoder = new TextEncoder();
+                const data = encoder.encode(passwordInput);
+
+                var encodedData = CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+            
+                encodedPasswordInput.value = encodedData;
+
+    });
+});
+</script>

@@ -54,7 +54,7 @@ class Installer extends SetupWizard {
         $f['admin_email']   = array('type'=>'email',    'required'=>1, 'error'=>__('Valid email required'));
         $f['username']      = array('type'=>'username', 'required'=>1, 'error'=>__('Username required'));
         $f['passwd']        = array('type'=>'string', 'required'=>1, 'error'=>__('Password required'));
-        $f['passwd2']       = array('type'=>'string', 'required'=>1, 'error'=>__('Confirm Password'));
+        $f['passwd2']       = array('type'=>'string', 'required'=>1, 'error'=>__('Confirm Password 8'));
         $f['prefix']        = array('type'=>'string',   'required'=>1, 'error'=>__('Table prefix required'));
         $f['dbhost']        = array('type'=>'string',   'required'=>1, 'error'=>__('Host name required'));
         $f['dbname']        = array('type'=>'string',   'required'=>1, 'error'=>__('Database name required'));
@@ -73,8 +73,9 @@ class Installer extends SetupWizard {
         if($vars['admin_email'] && $vars['email'] && !strcasecmp($vars['admin_email'],$vars['email']))
             $this->errors['admin_email']=__('Conflicts with system email above');
         //Admin's pass confirmation.
+        // echo $vars['passwd'].'                '.$vars['passwd2'] ; die;
         if(!$this->errors && strcasecmp($vars['passwd'],$vars['passwd2']))
-            $this->errors['passwd2']=__('Passwords do not match');
+            $this->errors['passwd2']=__('Passwords do not match install');
 
         //Check table prefix underscore required at the end!
         if($vars['prefix'] && substr($vars['prefix'], -1)!='_')
@@ -197,6 +198,7 @@ class Installer extends SetupWizard {
             'lastname' => Format::htmlchars($vars['lname']),
             'username' => $vars['username'],
         ));
+        // echo'<pre>datadis'; print_r($staff);die;
         $staff->updatePerms(array(
             User::PERM_CREATE,
             User::PERM_EDIT,

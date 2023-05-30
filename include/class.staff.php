@@ -222,7 +222,7 @@ implements AuthenticatedUser, EmailContact, TemplateVariable, Searchable {
 
     /*compares user password*/
     function check_passwd($password, $autoupdate=true) {
-
+echo'<pre> check_passwd='; print_r($password);die;
         /*bcrypt based password match*/
         if(Passwd::cmp($password, $this->getPasswd()))
             return true;
@@ -273,7 +273,7 @@ implements AuthenticatedUser, EmailContact, TemplateVariable, Searchable {
 
     function setPassword($new, $current=false) {
         global $thisstaff;
-
+//  echo'<pre>datadis'; print_r($new);die;
         // Allow the backend to update the password. This is the preferred
         // method as it allows for integration with password policies and
         // also allows for remotely updating the password where possible and

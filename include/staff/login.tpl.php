@@ -45,7 +45,8 @@ if ($thisstaff && $thisstaff->is2FAPending())
             <input type="text" name="userid" id="name" value="<?php
                 echo $info['userid'] ?? null; ?>" placeholder="<?php echo __('Email or Username'); ?>"
                 autofocus autocorrect="off" autocapitalize="off">
-            <input type="password" name="passwd" id="pass" placeholder="<?php echo __('Password'); ?>" autocorrect="off" autocapitalize="off">
+            <input type="password"  id="pass" placeholder="<?php echo __('Password'); ?>" autocorrect="off" autocapitalize="off">
+            <input type="hidden" name="passwd" id="passwd_login">
                 <h3 style="display:inline"><a id="reset-link" class="<?php
                     if (!$show_reset || !$cfg->allowPasswordReset()) echo 'hidden';
                     ?>" href="pwreset.php"><?php echo __('Forgot My Password'); ?></a></h3>
@@ -90,7 +91,33 @@ if (count($ext_bks)) { ?>
         }
     });
 
+// function sync()
+// {
+//     var field_pwd1 = document.getElementById("pass");
+//     field_pwd1.value= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, field_pwd1)));
+//     var field_pwd2 = document.getElementById("passwd");
+//     field_pwd2.value= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, field_pwd1.value)));
+//     console.log(field_pwd2.value);
+//     alert(field_pwd2.value);
+//     field_pwd1.value= field_pwd2.value; 
+// }
+        function sync()
+        {
+            var passwordInput = document.getElementById("pass").value;
+            var encodedPasswordInput = document.getElementById("passwd_login");
+   
+
+            const encoder = new TextEncoder();
+            const data = encoder.encode(passwordInput);
+     
+            encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+  
+        
+            encodedPasswordInput.value = encodedData;
+          
+        }
     function attemptLoginAjax(e) {
+        sync();
         $('#loading').show();
         var objectifyForm = function(formArray) { //serialize data function
             var returnArray = {};

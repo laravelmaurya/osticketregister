@@ -49,6 +49,7 @@ if($_POST && $_POST['s']) {
                 $_SESSION['ost_installer']['s']='install';
             break;
         case 'install':
+            // echo'<pre>datadis'; print_r($_POST);die;
             if($installer->install($_POST)) {
                 $_SESSION['info']=array('name'  =>ucfirst($_POST['fname'].' '.$_POST['lname']),
                                         'email' =>$_POST['admin_email'],
