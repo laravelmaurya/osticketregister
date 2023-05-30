@@ -91,31 +91,21 @@ if (count($ext_bks)) { ?>
         }
     });
 
-// function sync()
-// {
-//     var field_pwd1 = document.getElementById("pass");
-//     field_pwd1.value= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, field_pwd1)));
-//     var field_pwd2 = document.getElementById("passwd");
-//     field_pwd2.value= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, field_pwd1.value)));
-//     console.log(field_pwd2.value);
-//     alert(field_pwd2.value);
-//     field_pwd1.value= field_pwd2.value; 
-// }
-        function sync()
-        {
-            var passwordInput = document.getElementById("pass").value;
-            var encodedPasswordInput = document.getElementById("passwd_login");
-   
 
-            const encoder = new TextEncoder();
-            const data = encoder.encode(passwordInput);
-     
-            encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
-  
+    function sync()
+    {
+        var passwordInput = document.getElementById("pass").value;
+        var encodedPasswordInput = document.getElementById("passwd_login");
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(passwordInput);
+    
+        encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+    
+        encodedPasswordInput.value = encodedData;
         
-            encodedPasswordInput.value = encodedData;
-          
-        }
+
+    }
     function attemptLoginAjax(e) {
         sync();
         $('#loading').show();
