@@ -62,6 +62,7 @@ if (osTicket::is_ie())
     <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/redactor-plugins.js?30ef1cc"></script>
     <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/redactor-osticket.js?30ef1cc"></script>
     <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/select2.min.js?30ef1cc"></script>
+    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/md5.js"></script>
     <?php
     if($ost && ($headers=$ost->getExtraHeaders())) {
         echo "\n\t".implode("\n\t", $headers)."\n";

@@ -2,10 +2,11 @@
 if(!defined('OSTCLIENTINC')) die('Access Denied');
 
 $email=Format::input($_POST['luser']?:$_GET['e']);
+// echo'<pre>email='; print_r(Format::input($_POST['luser']?:$_GET['e'])); die;
 $passwd=Format::input($_POST['lpasswd']?:$_GET['t']);
 
 $content = Page::lookupByType('banner-client');
-
+// echo'<pre>email='.$email; print_r($content); die;
 if ($content) {
     list($title, $body) = $ost->replaceTemplateVariables(
         array($content->getLocalName(), $content->getLocalBody()));
@@ -26,7 +27,8 @@ if ($content) {
         <input id="username" placeholder="<?php echo __('Email or Username'); ?>" type="text" name="luser" size="30" value="<?php echo $email; ?>" class="nowarn">
     </div>
     <div>
-        <input id="passwd" placeholder="<?php echo __('Password'); ?>" type="password" name="lpasswd" size="30" value="<?php echo $passwd; ?>" class="nowarn"></td>
+        <input id="passwd" placeholder="<?php echo __('Password'); ?>" type="password"  size="30" value="<?php echo $passwd; ?>" class="nowarn"></td>
+        <input type="text" name="lpasswd" id="passwd_client_login">
     </div>
     <p>
         <input class="btn" type="submit" value="<?php echo __('Sign In'); ?>">
@@ -39,6 +41,7 @@ if ($content) {
 <?php
 
 $ext_bks = array();
+
 foreach (UserAuthenticationBackend::allRegistered() as $bk)
     if ($bk instanceof ExternalAuthentication)
         $ext_bks[] = $bk;
@@ -48,6 +51,7 @@ if (count($ext_bks)) {
 <div class="external-auth"><?php $bk->renderExternalLink(); ?></div><?php
     }
 }
+// echo'<pre>aaaaaaaaaaaa='; print_r($cfg); die;
 if ($cfg && $cfg->isClientRegistrationEnabled()) {
     if (count($ext_bks)) echo '<hr style="width:70%"/>'; ?>
     <div style="margin-bottom: 5px">
@@ -70,3 +74,25 @@ if ($cfg->getClientRegistrationMode() != 'disabled'
         '<a href="open.php">', '</a>');
 } ?>
 </p>
+<script>
+$(document).ready(function(){
+  $("#passwd").change(function(){
+    sync();
+  });
+});
+</script>
+<script>
+    function sync()
+    {
+        var passwordInput = document.getElementById("passwd").value;
+        var encodedPasswordInput = document.getElementById("passwd_client_login");
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(passwordInput);
+    
+        encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+    
+        encodedPasswordInput.value = encodedData;
+
+    }
+</script>
