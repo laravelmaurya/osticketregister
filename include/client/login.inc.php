@@ -28,7 +28,7 @@ if ($content) {
     </div>
     <div>
         <input id="passwd" placeholder="<?php echo __('Password'); ?>" type="password"  size="30" value="<?php echo $passwd; ?>" class="nowarn"></td>
-        <input type="text" name="lpasswd" id="passwd_client_login">
+        <input type="hidden" name="lpasswd" id="passwd_client_login">
     </div>
     <p>
         <input class="btn" type="submit" value="<?php echo __('Sign In'); ?>">
