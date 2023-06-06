@@ -1227,7 +1227,9 @@ class UserAccount extends VerySimpleModel {
     }
 
     function setPassword($new) {
-        $this->set('passwd', Passwd::hash($new));
+        // echo'<pre>manage=';  print_r($new);die;
+        //$this->set('passwd', Passwd::hash($new));
+        $this->set('passwd', $new);
         // Clean sessions
         Signal::send('auth.clean', $this->getUser());
     }

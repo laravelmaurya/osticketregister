@@ -191,6 +191,7 @@ class UsersAjaxAPI extends AjaxController {
             Http::response(404, 'Unknown user');
 
         $errors = $info = array();
+        // echo'<pre>post='; print_r($_POST);die;
         if ($_POST) {
             // Register user on post
             if ($user->getAccount())
@@ -226,6 +227,7 @@ class UsersAjaxAPI extends AjaxController {
         $info = $account->getInfo();
 
         if ($_POST) {
+            // echo'<pre>manage=';  print_r($_POST);die;
             if ($account->update($_POST, $errors))
                 Http::response(201, 'Account updated successfully');
 

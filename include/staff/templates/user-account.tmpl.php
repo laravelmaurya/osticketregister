@@ -104,9 +104,10 @@ if ($info['error']) {
                     <?php echo __('New Password'); ?>:
                 </td>
                 <td>
-                    <input type="password" size="35" name="passwd1" value="<?php echo $info['passwd1']; ?>" autocomplete="new-password">
+                    <input type="password" size="35" id="pass_regisert_by_agent"  value="<?php echo $info['passwd1']; ?>" autocomplete="new-password">
                     &nbsp;<span class="error">&nbsp;<?php echo
-                    $errors['passwd1']; ?></span>
+                    $errors['passwd1'];  ?></span>
+                    <input type="text" name="passwd1" id="passwd1" >
                 </td>
             </tr>
             <tr>
@@ -114,7 +115,7 @@ if ($info['error']) {
                    <?php echo __('Confirm Password'); ?>:
                 </td>
                 <td>
-                    <input type="password" size="35" name="passwd2" value="<?php echo $info['passwd2']; ?>" autocomplete="new-password">
+                    <input type="password" size="35" name="passwd2" id="passwd2" value="<?php echo $info['passwd2']; ?>" autocomplete="new-password">
                     &nbsp;<span class="error">&nbsp;<?php echo $errors['passwd2']; ?></span>
                 </td>
             </tr>
@@ -166,4 +167,28 @@ $(function() {
             $('tbody#password').show();
     });
 });
+</script>
+<script>
+  $(document).ready(function(){
+
+        $('#pass_regisert_by_agent').change(function(){
+         
+            sync()
+        });
+    });
+    function sync()
+    {
+        var passwordInput = document.getElementById("pass_regisert_by_agent").value;
+        var encodedPasswordInput = document.getElementById("passwd1");
+        alert(passwordInput);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(passwordInput);
+
+        encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+        encodedPasswordInput.value = encodedData;
+        alert(encodedPasswordInput.value);
+
+
+    }
 </script>
