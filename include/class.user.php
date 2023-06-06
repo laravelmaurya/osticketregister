@@ -1050,6 +1050,7 @@ class UsersName extends PersonsName {
 
 class UserEmail extends UserEmailModel {
     static function ensure($address) {
+        echo'<pre>email='.$email; print_r($address); die;
         $email = static::lookup(array('address'=>$address));
         if (!$email) {
             $email = new static(array('address'=>$address));

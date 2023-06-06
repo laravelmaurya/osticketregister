@@ -230,7 +230,7 @@ abstract class AuthenticationBackend {
     }
 
     static function process($username, $password=null, &$errors=array()) {
-
+ 
         if (!$username)
             return false;
 
@@ -245,6 +245,7 @@ abstract class AuthenticationBackend {
             // All backends are queried here, even if they don't support
             // authentication so that extensions like lockouts and audits
             // can be supported.
+
             try {
                 $result = $bk->authenticate($username, $password);
                 if ($result instanceof AuthenticatedUser
@@ -742,6 +743,7 @@ abstract class UserAuthenticationBackend  extends AuthenticationBackend {
     }
 
     function login($user, $bk) {
+ 
         global $ost;
 
         if (!$user || !$bk
@@ -750,7 +752,7 @@ abstract class UserAuthenticationBackend  extends AuthenticationBackend {
             return false;
 
         $acct = $user->getAccount();
-
+        // echo'<pre>datadis\n'; print_r($user); print_r($bk);die;
         if ($acct) {
             if (!$acct->isConfirmed())
                 throw new AccessDenied(__('Account confirmation required'));
@@ -1358,16 +1360,53 @@ class osTicketClientAuthentication extends UserAuthenticationBackend {
     static $id = "client";
 
     function authenticate($username, $password) {
-        if (!($acct = ClientAccount::lookupByUsername($username)))
-            return;
+  
+        include(INCLUDE_DIR.'staff/db/config.php');
 
-        if (($client = new ClientSession(new EndUser($acct->getUser())))
-                && !$client->getId())
-            return false;
-        elseif (!$acct->check_passwd($password))
-            return false;
-        else
-            return $client;
+        $query_select = "SELECT * FROM ost_user_account where username = '".$username."'  and passwd = '".$password."' ";
+        // echo'<pre>';print_r($query_select);die;
+        if($result = mysqli_query($con, $query_select)){
+        // echo'<pre>';print_r($result);die;
+            if( mysqli_num_rows($result) > 0){
+
+                    mysqli_close($con);
+                    if (!($acct = ClientAccount::lookupByUsername($username)))
+                         return;
+             
+                     if (($client = new ClientSession(new EndUser($acct->getUser())))
+                             && !$client->getId())
+                         return false;
+                 
+                        //  echo'<pre> $client1='; print_r($client); die;
+                         return $client;
+
+            }else
+            {
+
+                $query_select = "SELECT address  FROM ost_user_email where (address = '".$username."')";
+                $query_select_pass = "SELECT * FROM ost_user_account where (passwd = '".$password."')";
+                $result = mysqli_query($con, $query_select);
+                $result_pass = mysqli_query($con, $query_select_pass);
+ 
+                    if( mysqli_num_rows($result) > 0 && mysqli_num_rows($result_pass) > 0){
+                            // echo'<pre>$result=';print_r($result);
+                            // echo'<pre>$result_pass=';print_r($result_pass);die;
+
+                        if (!($acct = ClientAccount::lookupByUsername($username)))
+                            return;
+                
+                        if (($client = new ClientSession(new EndUser($acct->getUser())))
+                                && !$client->getId())
+                            return false;
+                            // echo'<pre> $client4='; print_r($client); die;
+                            return $client;
+                       }
+
+       
+            }
+           
+        }
+        mysqli_close($con);
     }
 
     static function checkPassword($new, $current) {
