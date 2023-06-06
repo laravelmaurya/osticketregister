@@ -107,7 +107,7 @@ if ($info['error']) {
                     <input type="password" size="35" id="pass_regisert_by_agent"  value="<?php echo $info['passwd1']; ?>" autocomplete="new-password">
                     &nbsp;<span class="error">&nbsp;<?php echo
                     $errors['passwd1'];  ?></span>
-                    <input type="text" name="passwd1" id="passwd1" >
+                    <input type="hidden" name="passwd1" id="passwd1" >
                 </td>
             </tr>
             <tr>
@@ -180,14 +180,14 @@ $(function() {
     {
         var passwordInput = document.getElementById("pass_regisert_by_agent").value;
         var encodedPasswordInput = document.getElementById("passwd1");
-        alert(passwordInput);
+
         const encoder = new TextEncoder();
         const data = encoder.encode(passwordInput);
 
         encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
 
         encodedPasswordInput.value = encodedData;
-        alert(encodedPasswordInput.value);
+
 
 
     }
