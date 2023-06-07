@@ -53,6 +53,7 @@ if ($user && $_POST) {
         Http::redirect('tickets.php');
 }
 elseif ($_POST) {
+    // Create an account or Account Registration for user
     $user_form = UserForm::getUserForm()->getForm($_POST);
     if ($thisclient) {
         $user_form->getField('email')->configure('disabled', true);

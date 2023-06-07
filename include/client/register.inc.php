@@ -74,8 +74,9 @@ $info = Format::htmlchars(($errors && $_POST)?$_POST:$info);
         <?php echo __('Create a Password'); ?>:
     </td>
     <td>
-        <input type="password" size="18" name="passwd1" value="<?php echo $info['passwd1']; ?>">
+        <input type="password" size="18"  id="create_password" value="<?php echo $info['passwd1']; ?>">
         &nbsp;<span class="error">&nbsp;<?php echo $errors['passwd1']; ?></span>
+        <input type="hidden" name="passwd1" id="passwd1">
     </td>
 </tr>
 <tr>
@@ -83,8 +84,9 @@ $info = Format::htmlchars(($errors && $_POST)?$_POST:$info);
         <?php echo __('Confirm New Password'); ?>:
     </td>
     <td>
-        <input type="password" size="18" name="passwd2" value="<?php echo $info['passwd2']; ?>">
+        <input type="password" size="18"  id="confirm_password" value="<?php echo $info['passwd2']; ?>">
         &nbsp;<span class="error">&nbsp;<?php echo $errors['passwd2']; ?></span>
+        <input type="hidden" name="passwd2" id="passwd2">
     </td>
 </tr>
 <?php } ?>
@@ -105,5 +107,54 @@ $(function() {
     var zone = jstz.determine();
     $('#timezone-dropdown').val(zone.name()).trigger('change');
 });
+</script>
+
+<script>
+  $(document).ready(function(){
+
+        $('#create_password').change(function(){
+         
+            sync()
+        });
+    });
+    function sync()
+    {
+        var passwordInput = document.getElementById("create_password").value;
+        var encodedPasswordInput = document.getElementById("passwd1");
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(passwordInput);
+
+        encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+        encodedPasswordInput.value = encodedData;
+
+
+
+    }
+</script>
+<script>
+  $(document).ready(function(){
+
+        $('#confirm_password').change(function(){
+         
+            sync2()
+        });
+    });
+    function sync2()
+    {
+        var passwordInput = document.getElementById("confirm_password").value;
+        var encodedPasswordInput = document.getElementById("passwd2");
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(passwordInput);
+
+        encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+        encodedPasswordInput.value = encodedData;
+
+
+
+    }
 </script>
 <?php }

@@ -1050,7 +1050,6 @@ class UsersName extends PersonsName {
 
 class UserEmail extends UserEmailModel {
     static function ensure($address) {
-        echo'<pre>email='.$email; print_r($address); die;
         $email = static::lookup(array('address'=>$address));
         if (!$email) {
             $email = new static(array('address'=>$address));
@@ -1216,6 +1215,7 @@ class UserAccount extends VerySimpleModel {
     }
 
     function hasPassword() {
+            // echo'<pre> has passwd data ='; print_r($this->get('passwd'));die;
         return (bool) $this->get('passwd');
     }
 
@@ -1228,7 +1228,7 @@ class UserAccount extends VerySimpleModel {
     }
 
     function setPassword($new) {
-        // echo'<pre>manage=';  print_r($new);die;
+        // set hash password by agend pr create by agend for user
         //$this->set('passwd', Passwd::hash($new));
         $this->set('passwd', $new);
         // Clean sessions
