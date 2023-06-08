@@ -29,6 +29,7 @@ if(OSTINSTALLED!=TRUE){
     exit;
 }
 
+
 # Encrypt/Decrypt secret key - randomly generated during installation.
 define('SECRET_SALT','_fjofGKCJ1nO1y2CuaD54GEL5Kwf3pv8');
 
@@ -159,4 +160,13 @@ define('LOCAL_NETWORKS', '127.0.0.0/24');
 #
 # define('SESSION_BACKEND', 'memcache');
 # define('MEMCACHE_SERVERS', 'server1:11211,server2:11211');
+
+
+// Remove X-Powered-By and hide detail apache
+
+if (function_exists('header_remove')) {
+    header_remove('X-Powered-By'); // PHP 5.3+
+} else {
+    @ini_set('expose_php', 'off');
+}
 ?>
