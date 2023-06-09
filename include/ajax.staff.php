@@ -73,7 +73,7 @@ class StaffAjaxAPI extends AjaxController {
 
     function changePassword($id) {
         global $cfg, $ost, $thisstaff;
-
+        // echo'<pre>$_POST='; print_r($_POST);die;
         if (!$thisstaff)
             Http::response(403, 'Agent login required');
         if (!$id || $thisstaff->getId() != $id)
@@ -81,10 +81,12 @@ class StaffAjaxAPI extends AjaxController {
 
         $form = new PasswordChangeForm($_POST);
         $errors = array();
-
+        // echo'<pre>form'; echo($form->isValid());die;
         if ($_POST && $form->isValid()) {
             $clean = $form->getClean();
+     
             if (($rtoken = $_SESSION['_staff']['reset-token'])) {
+                // echo'<pre>$id'; print_r($clean);die;
                 $_config = new Config('pwreset');
                 if ($_config->get($rtoken) != $thisstaff->getId())
                     $errors['err'] =
@@ -96,6 +98,7 @@ class StaffAjaxAPI extends AjaxController {
             }
             if (!$errors) {
                 try {
+                    //    echo'<pre>$id'; print_r($clean['current']);die;
                     $thisstaff->setPassword($clean['passwd1'], @$clean['current']);
                     if ($thisstaff->save()) {
                         if ($rtoken) {

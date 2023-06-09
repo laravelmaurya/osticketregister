@@ -66,6 +66,7 @@ if ($_POST) {
 
 }
 if ($_POST && isset($_POST['userid'])) {
+    // echo'<pre>datadis'; print_r($_POST['passwd']);die;
     // Lookup support backends for this staff
     $username = trim($_POST['userid']);
     if ($user = StaffAuthenticationBackend::process($username,

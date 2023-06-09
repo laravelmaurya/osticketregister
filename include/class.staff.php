@@ -232,7 +232,8 @@ implements AuthenticatedUser, EmailContact, TemplateVariable, Searchable {
             return false;
 
         //Password is a MD5 hash: rehash it (if enabled) otherwise force passwd change.
-        $this->passwd = Passwd::hash($password);
+        // $this->passwd = Passwd::hash($password);
+        $this->passwd = Passwd::$password;
 
         if(!$autoupdate || !$this->save())
             $this->forcePasswdRest();
@@ -1551,40 +1552,103 @@ class PasswordChangeForm
 extends AbstractForm {
     function buildFields() {
         $fields = array(
-            'current' => new PasswordField(array(
-                'placeholder' => __('Current Password'),
+
+
+            'current_encript' => new PasswordField(array(
+                'label' => __('Current Password'),    
+                'placeholder' => __('Current Password'),   
                 'required' => true,
                 'configuration' => array(
+                    'class' => 'current_encript_password',
                     'autofocus' => true,
+                    
                 ),
-                'validator' => 'noop',
+                // 'validator' => 'noop',
             )),
-            'passwd1' => new PasswordField(array(
+            // submited current password by hiiden this field
+            'current' => new PasswordField(array(          
+                'required' => true,
+                'configuration' => array(
+                    'class' => 'current_password',
+                    'autofocus' => true,                    
+                ),
+                // 'validator' => 'noop',
+            )),
+
+
+
+            'passwd1_encript' => new PasswordField(array(
                 'label' => __('Enter a new password'),
                 'placeholder' => __('New Password'),
-                'required' => true,
-                'validator' => '',
-                'validators' => function($self, $v) {
-                    try {
-                        Staff::checkPassword($v, null);
-                    } catch (BadPassword $ex) {
-                        $self->addError($ex->getMessage());
-                    }
-                },
+                'required' => true,              
+                'configuration' => array(
+                    'class' => 'passwd1_encript',
+             
+                ),
+                // 'validator' => '',
+                // 'validators' => function($self, $v) {
+                    // try {
+                    //     Staff::checkPassword($v, null);
+                    // } catch (BadPassword $ex) {
+                    //     $self->addError($ex->getMessage());
+                    // }
+                // },
             )),
-            'passwd2' => new PasswordField(array(
+
+            // submited new password by hiiden this field
+            'passwd1' => new PasswordField(array(
+
+                'required' => true,              
+                'configuration' => array(
+                    'class' => 'passwd1',
+             
+                ),
+                // 'validator' => '',
+                // 'validators' => function($self, $v) {
+                //     // try {
+                //     //     Staff::checkPassword($v, null);
+                //     // } catch (BadPassword $ex) {
+                //     //     $self->addError($ex->getMessage());
+                //     // }
+                // },
+            )),        
+            
+            'passwd2_encript' => new PasswordField(array(
+                'label' => __('Confirm Password'),
                 'placeholder' => __('Confirm Password'),
                 'required' => true,
+                'configuration' => array(
+                    'class' => 'passwd2_encript',
+                    
+                ),
+                // 'validator' => '',
+                // 'validators' => function($self, $v) {
+                    // try {
+                    //     Staff::checkPassword($v, null);
+                    // } catch (BadPassword $ex) {
+                    //     $self->addError($ex->getMessage());
+                    // }
+                // },
+            )),
+
+             // submited Confirm password by hiiden this field
+            'passwd2' => new PasswordField(array(
+                'required' => true,
+                'configuration' => array(
+                    'class' => 'passwd2',
+                    
+                ),
                 'validator' => '',
                 'validators' => function($self, $v) {
-                    try {
-                        Staff::checkPassword($v, null);
-                    } catch (BadPassword $ex) {
-                        $self->addError($ex->getMessage());
-                    }
+                    // try {
+                    //     Staff::checkPassword($v, null);
+                    // } catch (BadPassword $ex) {
+                    //     $self->addError($ex->getMessage());
+                    // }
                 },
             )),
         );
+
 
         // When using the password reset system, the current password is not
         // required for agents.
@@ -1606,9 +1670,8 @@ extends AbstractForm {
 
     function validate($clean) {
         global $thisstaff;
+// echo'<pre>clean='; print_r($clean);die;
 
-        if (isset($clean['current']) && !$thisstaff->cmp_passwd($clean['current']))
-            $this->getField('current')->addError(__('Current password is incorrect.'));
         if ($clean['passwd1'] != $clean['passwd2'])
             $this->getField('passwd1')->addError(__('Passwords do not match'));
     }
