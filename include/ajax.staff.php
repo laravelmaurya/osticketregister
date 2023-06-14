@@ -73,20 +73,83 @@ class StaffAjaxAPI extends AjaxController {
 
     function changePassword($id) {
         global $cfg, $ost, $thisstaff;
-        // echo'<pre>$_POST='; print_r($_POST);die;
         if (!$thisstaff)
             Http::response(403, 'Agent login required');
         if (!$id || $thisstaff->getId() != $id)
             Http::response(404, 'No such agent');
 
+            $staff_change_password_custom = $_POST['staff_change_password_custom'];
+
+        if('staff_change_password_custom' == $staff_change_password_custom){
+            $ia= include(INCLUDE_DIR.'staff/db/config.php');
+            $current_password = $_POST['current_password'];
+            $passwd1 = $_POST['passwd1'];
+            $passwd2 = $_POST['passwd2'];
+            if(isset($passwd1) && isset($passwd2)){
+            $compare_password = strcmp($passwd1,$passwd2);
+            if($compare_password == 0){
+                $query_select = "SELECT * FROM ost_staff where passwd = '".$current_password."' ";
+
+                $result = mysqli_query($con, $query_select);
+                if($result){
+        
+                    if( mysqli_num_rows($result) > 0){
+        
+                        $passwd1 = $_POST['passwd1'];
+                        $staff_id = $_POST['staff_id'];
+                        $query_update = "UPDATE ost_staff SET passwd='$passwd1' WHERE staff_id=$staff_id";
+  
+                        $query_update_run = mysqli_query($con,$query_update);
+                      
+                    ?>
+                    <script type="text/javascript">
+                        alert('Successfully updated');
+                        setTimeout(function () {
+                        location.reload();
+                        }, 2000);
+                    </script>
+                    <?php
+                    }else{
+                        ?>
+                        <script type="text/javascript">
+                        alert('Current password is incorrect.');
+                        setTimeout(function () {
+                        location.reload();
+                        }, 2000);
+                    </script>
+                    <?php }
+            
+                }
+           }else{
+            ?>
+            <script type="text/javascript">
+            alert('Passwords do not match');
+            setTimeout(function () {
+            location.reload();
+            }, 2000);
+           </script>
+        <?php 
+           }
+         }
+         else{
+            ?>
+            <script type="text/javascript">
+            $('.updatePassword').prop('disabled', true);
+            alert('All field is require');
+            setTimeout(function () {
+            location.reload();
+            }, 2000);
+           </script>
+        <?php 
+          }
+        }
         $form = new PasswordChangeForm($_POST);
         $errors = array();
-        // echo'<pre>form'; echo($form->isValid());die;
+
         if ($_POST && $form->isValid()) {
             $clean = $form->getClean();
      
             if (($rtoken = $_SESSION['_staff']['reset-token'])) {
-                // echo'<pre>$id'; print_r($clean);die;
                 $_config = new Config('pwreset');
                 if ($_config->get($rtoken) != $thisstaff->getId())
                     $errors['err'] =
@@ -98,7 +161,6 @@ class StaffAjaxAPI extends AjaxController {
             }
             if (!$errors) {
                 try {
-                    //    echo'<pre>$id'; print_r($clean['current']);die;
                     $thisstaff->setPassword($clean['passwd1'], @$clean['current']);
                     if ($thisstaff->save()) {
                         if ($rtoken) {

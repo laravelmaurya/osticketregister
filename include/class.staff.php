@@ -244,6 +244,21 @@ implements AuthenticatedUser, EmailContact, TemplateVariable, Searchable {
     function cmp_passwd($password) {
         return $this->check_passwd($password, false);
     }
+    function check_current_password($password) {
+       $incl= include(INCLUDE_DIR.'staff/db/config.php');
+
+        $query_select = "SELECT * FROM ost_staff where  passwd = '".$password."' ";
+
+        if($result = mysqli_query($con, $query_select)){
+
+            if( mysqli_num_rows($result) > 0){
+                        return true;
+            }else{
+                return false;
+            }
+
+         }
+    }
 
     function hasPassword() {
         return (bool) $this->passwd;
@@ -1553,51 +1568,23 @@ extends AbstractForm {
     function buildFields() {
         $fields = array(
 
-
-            'current_encript' => new PasswordField(array(
-                'label' => __('Current Password'),    
-                'placeholder' => __('Current Password'),   
-                'required' => true,
-                'configuration' => array(
-                    'class' => 'current_encript_password',
-                    'autofocus' => true,
-                    
-                ),
-                // 'validator' => 'noop',
-            )),
-            // submited current password by hiiden this field
-            'current' => new PasswordField(array(          
+            'current' => new PasswordField(array(      
+                'label' => __('Current Password'),   
+                'placeholder' => __('Current Password'),      
                 'required' => true,
                 'configuration' => array(
                     'class' => 'current_password',
+                    'style' => 'display-none',
                     'autofocus' => true,                    
                 ),
                 // 'validator' => 'noop',
             )),
 
 
-
-            'passwd1_encript' => new PasswordField(array(
-                'label' => __('Enter a new password'),
-                'placeholder' => __('New Password'),
-                'required' => true,              
-                'configuration' => array(
-                    'class' => 'passwd1_encript',
-             
-                ),
-                // 'validator' => '',
-                // 'validators' => function($self, $v) {
-                    // try {
-                    //     Staff::checkPassword($v, null);
-                    // } catch (BadPassword $ex) {
-                    //     $self->addError($ex->getMessage());
-                    // }
-                // },
-            )),
-
             // submited new password by hiiden this field
             'passwd1' => new PasswordField(array(
-
+                'label' => __('Enter a new password'),
+                'placeholder' => __('New Password'),       
                 'required' => true,              
                 'configuration' => array(
                     'class' => 'passwd1',
@@ -1613,26 +1600,11 @@ extends AbstractForm {
                 // },
             )),        
             
-            'passwd2_encript' => new PasswordField(array(
-                'label' => __('Confirm Password'),
-                'placeholder' => __('Confirm Password'),
-                'required' => true,
-                'configuration' => array(
-                    'class' => 'passwd2_encript',
-                    
-                ),
-                // 'validator' => '',
-                // 'validators' => function($self, $v) {
-                    // try {
-                    //     Staff::checkPassword($v, null);
-                    // } catch (BadPassword $ex) {
-                    //     $self->addError($ex->getMessage());
-                    // }
-                // },
-            )),
 
              // submited Confirm password by hiiden this field
             'passwd2' => new PasswordField(array(
+                'label' => __('Confirm Password'),
+                'placeholder' => __('Confirm Password'),
                 'required' => true,
                 'configuration' => array(
                     'class' => 'passwd2',
@@ -1670,11 +1642,16 @@ extends AbstractForm {
 
     function validate($clean) {
         global $thisstaff;
-// echo'<pre>clean='; print_r($clean);die;
-
-        if ($clean['passwd1'] != $clean['passwd2'])
-            $this->getField('passwd1')->addError(__('Passwords do not match'));
+        $check_current_password =  $thisstaff->check_current_password($clean['current']);
+        if (isset($clean['current']) && !$check_current_password){
+        $this->getField('current')->addError(__('Current password is incorrect.'));
+        }
+        if ($clean['passwd1'] != $clean['passwd2']){
+        $this->getField('passwd1')->addError(__('Passwords do not match'));
+        }
     }
+
+
 }
 
 class ResetAgentPermissionsForm
