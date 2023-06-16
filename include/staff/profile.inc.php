@@ -606,7 +606,6 @@ $(function(){
 <?php
 if ($staff->change_passwd) { ?>
 <script type="text/javascript">
-
     $(function() { $('#change-pw-button').trigger('click'); });
 </script>
 

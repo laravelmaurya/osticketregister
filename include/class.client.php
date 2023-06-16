@@ -398,12 +398,23 @@ class ClientAccount extends UserAccount {
 
         //Password is a MD5 hash: rehash it (if enabled) otherwise force passwd change.
         if ($autoupdate)
-            $this->set('passwd', Passwd::hash($password));
+            $this->set('passwd', Passwd::$password);
+            // $this->set('passwd', Passwd::hash($password));
 
         if (!$autoupdate || !$this->save())
             $this->forcePasswdReset();
 
         return true;
+    }
+
+    function matchCurrentPassword($password,$get_user_id) {        
+        $es= include(INCLUDE_DIR.'staff/db/config.php');        
+        $query_select = "SELECT * FROM ost_user_account where passwd = '".$password."' and user_id='".$get_user_id."'";        
+        $result = mysqli_query($con, $query_select);
+            if(mysqli_num_rows($result) > 0){                            
+                return true;
+        }
+        return false;
     }
 
     function hasCurrentPassword($password) {
@@ -456,7 +467,7 @@ class ClientAccount extends UserAccount {
             elseif ($this->get('passwd')) {
                 if (!$vars['cpasswd'])
                     $errors['cpasswd']=__('Current password is required');
-                elseif (!$this->hasCurrentPassword($vars['cpasswd']))
+                elseif (!$this->matchCurrentPassword($vars['cpasswd'],$vars['get_user_id']))
                     $errors['cpasswd']=__('Invalid current password!');
             }
 
