@@ -30,8 +30,10 @@ $user = User::lookup($thisclient->getId());
 if ($user && $_POST) {
     $errors = array();
     if ($acct = $thisclient->getAccount()) {
-       $acct->update($_POST, $errors);
+            $_POST['get_user_id']= $thisclient->getId();
+            $acct->update($_POST, $errors);
     }
+    unset($_POST['get_user_id'] );
     if (!$errors && $user->updateInfo($_POST, $errors))
         Http::redirect('tickets.php');
 }

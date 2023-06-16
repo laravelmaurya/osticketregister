@@ -3,7 +3,7 @@
 'Use the forms below to update the information we have on file for your account'
 ); ?>
 </p>
-<form action="profile.php" method="post">
+<form id="form-Profile" action="profile.php" method="post" >
   <?php csrf_token(); ?>
 <table width="800" class="padded">
 <?php
@@ -64,7 +64,7 @@ $selected = ($info['lang'] == $l['code']) ? 'selected="selected"' : ''; ?>
         <?php echo __('Current Password'); ?>:
     </td>
     <td>
-        <input type="password" size="18" name="cpasswd" value="<?php echo $info['cpasswd']; ?>">
+        <input type="password" size="18" name="cpasswd" value="" class="current_password">
         &nbsp;<span class="error">&nbsp;<?php echo $errors['cpasswd']; ?></span>
     </td>
 </tr>
@@ -74,7 +74,7 @@ $selected = ($info['lang'] == $l['code']) ? 'selected="selected"' : ''; ?>
         <?php echo __('New Password'); ?>:
     </td>
     <td>
-        <input type="password" size="18" name="passwd1" value="<?php echo $info['passwd1']; ?>">
+        <input type="password" size="18" name="passwd1" value="" class="passwd1">
         &nbsp;<span class="error">&nbsp;<?php echo $errors['passwd1']; ?></span>
     </td>
 </tr>
@@ -83,7 +83,7 @@ $selected = ($info['lang'] == $l['code']) ? 'selected="selected"' : ''; ?>
         <?php echo __('Confirm New Password'); ?>:
     </td>
     <td>
-        <input type="password" size="18" name="passwd2" value="<?php echo $info['passwd2']; ?>">
+        <input type="password" size="18" name="passwd2" value="" class="passwd2">
         &nbsp;<span class="error">&nbsp;<?php echo $errors['passwd2']; ?></span>
     </td>
 </tr>
@@ -92,9 +92,76 @@ $selected = ($info['lang'] == $l['code']) ? 'selected="selected"' : ''; ?>
 </table>
 <hr>
 <p style="text-align: center;">
-    <input type="submit" value="<?php echo __('Update'); ?>"/>
+    <input type="submit" value="<?php echo __('Update'); ?>" class="setPasswordValue">
     <input type="reset" value="<?php echo __('Reset'); ?>"/>
     <input type="button" value="<?php echo __('Cancel'); ?>" onclick="javascript:
         window.location.href='index.php';"/>
 </p>
 </form>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  // Handle form submission
+  document.getElementById("form-Profile").addEventListener("submit", function(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault(); 
+    // Perform any additional JavaScript logic or tasks
+    syncForCurrentPassword();
+    syncForNewPasswordAndConfirmPassword();
+    // Delay form submission after 1 seconds
+    setTimeout(function() {
+      event.target.submit(); // Submit the form
+    }, 1000); // 1 seconds delay
+  });
+});
+
+
+function syncForCurrentPassword()
+{
+    var passwordInput = $('.current_password').val();
+
+    if(passwordInput!=''){
+    console.log('syncForCurrentPassword passwordInput = '+passwordInput);
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(passwordInput);
+    encodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+    var current_password = $('.current_password').val(encodedData);
+
+    console.log('encodedData = '+encodedData);
+
+    }
+}
+function syncForNewPasswordAndConfirmPassword()
+{
+
+    var passwd1 = $('.passwd1').val();
+    var passwd2 = $('.passwd2').val();
+    const compareValue = passwd1.localeCompare(passwd2)
+
+    if(passwd1!='' && passwd2!=''){
+          if(compareValue==0){
+
+          const encoder = new TextEncoder();
+          const data = encoder.encode(passwd1);
+          passwd1EncodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+          var new_password = $('.passwd1').val(passwd1EncodedData);
+
+          console.log('encodedData = '+passwd1EncodedData);
+
+      // encription Confirm Password 
+      //   -------------------------------------------------------------------------------------------------
+          const encoder2 = new TextEncoder();
+          const data2 = encoder2.encode(passwd2);
+          passwd2EncodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data2)));
+
+          var confirm_password = $('.passwd2').val(passwd2EncodedData);
+          console.log('passwd2EncodedData = '+passwd2EncodedData);
+
+          }
+      }
+
+}
+
+</script>
