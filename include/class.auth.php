@@ -1115,7 +1115,7 @@ class osTicketStaffAuthentication extends StaffAuthenticationBackend {
     function authenticate($username, $password) {
         include(INCLUDE_DIR.'staff/db/config.php');
 
-        $query_select = "SELECT * FROM ost_staff where (username = '$username' OR email = '$username')  and passwd = '$password' ";
+        $query_select = "SELECT username, email, passwd FROM ost_staff where (username = '$username' OR email = '$username')  and passwd = '$password' ";
         $result = mysqli_query($con, $query_select);
         if($result){
 
