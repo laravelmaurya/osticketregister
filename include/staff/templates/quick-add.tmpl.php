@@ -5,8 +5,9 @@
 <?php if (isset($errors['err'])) { ?>
     <div id="msg_error" class="error-banner"><?php echo Format::htmlchars($errors['err']); ?></div>
 <?php } ?>
-<form method="post" action="#<?php echo $path; ?>">
+<form method="post" action="#<?php echo $path; ?>" id="myForm">
 <?php $change_password= explode("/",$path);
+// echo'<pre>';print_r($change_password); die;
        $staff_id = $change_password[1];
 ?>
   <div class="quick-add">
@@ -70,13 +71,59 @@
         <?php if('change-password'==$change_password[2]){ ?>    
           <input type="button" value="Ok" class="setPasswordValue" />
         <?php  } ?>
-      <input type="submit" value="<?php echo $verb ?: __('Create'); ?>"  <?php if('change-password'==$change_password[2]){ ?> disabled class="updatePassword" <?php } ?> />
+
+        <?php if('set-password'==$change_password[2]){ ?>    
+          <input type="button" value="Ok" class="set-password" />
+        <?php  } ?>
+
+      <input type="submit" value="<?php echo $verb ?: __('Create'); ?>"  
+       <?php  if('change-password'==$change_password[2]){ ?>
+               disabled class="updatePassword" 
+      <?php   }elseif('set-password'==$change_password[2]){ ?>
+               disabled class="updatePassword addRemoveUpdateClass" 
+      <?php
+         }
+      ?>
+               
+                
+      />
     </span>
   </p>
   <div class="clear"></div>
 </form>
 
 <script type="text/javascript">
+
+
+
+
+  // $(document).ready(function() {
+  // // Attach event listener to all checkboxes
+
+  //     // Check if the first checkbox is unchecked
+  //     if ($('input[type="checkbox"]:first').is(':checked')) {
+  //       // Checkbox 1 is unchecked
+        
+  //       console.log('Checkbox 1 is unchecked');
+  //     } else {
+  //       // Checkbox 1 is checked
+  //       console.log('Checkbox 1 is checked');
+  //       $('.set-password').hide();
+  //       $(".addRemoveUpdateClass").removeClass("updatePassword");
+  //       $(".addRemoveUpdateClass").attr("disabled",false);
+  //     }
+      
+  //   });
+
+
+
+$(function(){
+  $(document).on('click','.set-password', function(){
+    console.log('on change get value feom class set-password=');
+    syncForSetPassword();
+  });
+});
+
 $(function(){
   $(document).on('click','.setPasswordValue', function(){
     console.log('on change get value feom class current_password=');
@@ -85,8 +132,64 @@ $(function(){
   });
 });
 
+
+function syncForSetPassword()
+{
+
+    var passwd1 = $('.passwd1').val();
+    var passwd2 = $('.passwd2').val();
+    const compareValue = passwd1.localeCompare(passwd2)
+
+    if(passwd1!='' && passwd2!=''){
+          if(compareValue==0){
+
+          const encoder = new TextEncoder();
+          const data = encoder.encode(passwd1);
+          passwd1EncodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+          var new_password = $('.passwd1').val(passwd1EncodedData);
+          
+          console.log('encodedData = '+passwd1EncodedData);
+
+      // encription Confirm Password 
+      //   -------------------------------------------------------------------------------------------------
+          const encoder2 = new TextEncoder();
+          const data2 = encoder2.encode(passwd2);
+          passwd2EncodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data2)));
+
+          var confirm_password = $('.passwd2').val(passwd2EncodedData);
+          console.log('passwd2EncodedData = '+passwd2EncodedData);
+          
+                  if ( $('.passwd1').val() != '' && $('.passwd2').val() != '') {
+                      $('.updatePassword').prop('disabled', false);
+                      $('.set-password').hide();
+                  } else {
+                      $('.updatePassword').prop('disabled', true);
+                  }
+
+                  $(document).on('click','.updatePassword', function(){
+                          setTimeout(function () {
+                          location.reload();
+                        }, 2000);
+                  });
+          }
+          else{
+            alert('Passwords do not match');
+            setTimeout(function () {
+              location.reload();
+            }, 2000);
+          }
+      }else{
+            alert('New password and Confirm Password  field is require');
+            setTimeout(function () {
+              location.reload();
+            }, 2000);
+       }
+
+}
 function syncForCurrentPassword()
 {
+
     var passwordInput = $('.current_password').val();
 
     if(passwordInput!=''){
@@ -135,7 +238,7 @@ function syncForNewPasswordAndConfirmPassword()
           var confirm_password = $('.passwd2').val(passwd2EncodedData);
           console.log('passwd2EncodedData = '+passwd2EncodedData);
           
-          if ($('.current_password').val() != '' && $('.current_password').val() != '' && $('.current_password').val() != '') {
+                  if ($('.current_password').val() != '' && $('.current_password').val() != '' && $('.current_password').val() != '') {
                       $('.updatePassword').prop('disabled', false);
                       $('.setPasswordValue').hide();
                   } else {
@@ -156,5 +259,6 @@ function syncForNewPasswordAndConfirmPassword()
        }
 
 }
+
 
 </script>

@@ -1510,6 +1510,7 @@ extends AbstractForm {
                 'required' => true,
                 'configuration' => array(
                     'classes' => 'span12',
+                    'class' => 'passwd1',
                 ),
                 'visibility' => new VisibilityConstraint(
                     new Q(array('welcome_email' => false)),
@@ -1529,6 +1530,7 @@ extends AbstractForm {
                 'required' => true,
                 'configuration' => array(
                     'classes' => 'span12',
+                    'class' => 'passwd2',
                 ),
                 'visibility' => new VisibilityConstraint(
                     new Q(array('welcome_email' => false)),
