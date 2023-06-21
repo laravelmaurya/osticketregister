@@ -5,7 +5,7 @@
 <?php if (isset($errors['err'])) { ?>
     <div id="msg_error" class="error-banner"><?php echo Format::htmlchars($errors['err']); ?></div>
 <?php } ?>
-<form method="post" action="#<?php echo $path; ?>">
+<form id="myForm" method="post" action="#">
 <?php $change_password= explode("/",$path);
        $staff_id = $change_password[1];
 ?>
@@ -75,6 +75,64 @@
   </p>
   <div class="clear"></div>
 </form>
+<script>
+$(function(){
+  // Handle form submission
+  $('#myForm').submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Perform any additional JavaScript logic or tasks
+    // ...
+    // ...
+    var passwd1 = $('.passwd1').val();
+    var passwd2 = $('.passwd2').val();
+    const compareValue = passwd1.localeCompare(passwd2);
+
+    if(passwd1!='' && passwd2!=''){
+          if(compareValue==0){
+
+          const encoder = new TextEncoder();
+          const data = encoder.encode(passwd1);
+          passwd1EncodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data)));
+
+          var new_password = $('.passwd1').val(passwd1EncodedData);
+
+          console.log('encodedData = '+passwd1EncodedData);
+
+      // encription Confirm Password 
+      //   -------------------------------------------------------------------------------------------------
+          const encoder2 = new TextEncoder();
+          const data2 = encoder2.encode(passwd2);
+          passwd2EncodedData= CryptoJS.SHA256(btoa(String.fromCharCode.apply(null, data2)));
+
+          var confirm_password = $('.passwd2').val(passwd2EncodedData);
+          console.log('passwd2EncodedData = '+passwd2EncodedData);
+
+          var path = '<?php echo $path; ?>';
+          $('#myForm').attr('action', '#'+path); // Set the new action value
+
+          }
+          else{
+            alert('Passwords do not match');
+            setTimeout(function () {
+              location.reload();
+            }, 2000);
+          }
+      }else{
+            alert('New password and Confirm Password  field is require');
+            setTimeout(function () {
+              location.reload();
+            }, 2000);
+       }
+
+
+ 
+
+
+  });
+});
+
+</script>
 
 <script type="text/javascript">
 $(function(){

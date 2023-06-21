@@ -20,7 +20,7 @@ class StaffAjaxAPI extends AjaxController {
    */
   function setPassword($id) {
       global $ost, $thisstaff;
-
+    //   echo'<pre>setpass ='; print_r($id);die;
       if (!$thisstaff)
           Http::response(403, 'Agent login required');
       if (!$thisstaff->isAdmin())
@@ -85,18 +85,17 @@ class StaffAjaxAPI extends AjaxController {
             $current_password = $_POST['current_password'];
             $passwd1 = $_POST['passwd1'];
             $passwd2 = $_POST['passwd2'];
+            $staff_id = $_POST['staff_id'];
             if(isset($passwd1) && isset($passwd2)){
             $compare_password = strcmp($passwd1,$passwd2);
             if($compare_password == 0){
-                $query_select = "SELECT * FROM ost_staff where passwd = '".$current_password."' ";
+                $query_select = "SELECT * FROM ost_staff where passwd = '$current_password' and staff_id=$staff_id";
 
                 $result = mysqli_query($con, $query_select);
                 if($result){
         
                     if( mysqli_num_rows($result) > 0){
-        
-                        $passwd1 = $_POST['passwd1'];
-                        $staff_id = $_POST['staff_id'];
+                      
                         $query_update = "UPDATE ost_staff SET passwd='$passwd1' WHERE staff_id=$staff_id";
   
                         $query_update_run = mysqli_query($con,$query_update);
