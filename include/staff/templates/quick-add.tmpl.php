@@ -9,10 +9,15 @@
 <?php $change_password= explode("/",$path);
        $staff_id = $change_password[1];
 ?>
+
   <div class="quick-add">
-    <?php if('change-password'!= $change_password[2]){ ?>
-    <?php echo $form->asTable(); ?>
-    <?php } elseif('change-password'==$change_password[2]) { ?>
+    
+    <?php 
+    if('change-password'!=$change_password[2] and 'set-password'!=$change_password[2]) {
+      echo 'change'.'cp = '.$change_password[2];
+      echo 'set'.'sp = '.$change_password[2];
+      echo $form->asTable(); 
+    }elseif('change-password'==$change_password[2]) { ?>
       <input type="hidden" value="<?php echo $staff_id; ?>" name="staff_id">
       <input type="hidden" value="staff_change_password_custom" name="staff_change_password_custom">
 
@@ -56,31 +61,102 @@
             </tr>
         </tbody>
     </table>
+    <?php }elseif('set-password'==$change_password[2]) { ?>
+      <input type="hidden" value="<?php echo $staff_id; ?>" name="staff_id">
+      <input type="hidden" value="staff_set_password_custom" name="staff_set_password_custom">
+
+      <table class="grid form">
+        <tbody>
+        <tr><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td></tr></tbody>
+        <tbody>
+ 
+            <tr>          
+                <td class="cell" colspan="12" rowspan="1" style="padding-top: 20px" data-field-id="2">
+                    <fieldset class="field " id="field_passwd1" data-field-id="2">
+                        <label class="required" for="passwd1">
+                            Enter a new password:                                
+                            <span class="error">*</span>
+                        </label>
+                        <input type="password" id="passwd1" class="passwd1" size="16" maxlength="30" placeholder="New Password" name="passwd1" value="">
+                    </fieldset>
+                </td>
+            </tr>
+            <tr>          
+                <td class="cell" colspan="12" rowspan="1" style="" data-field-id="3">
+                    <fieldset class="field " id="field_passwd2" data-field-id="3">
+                        <label class="required" for="passwd2">
+                            Confirm Password:                                
+                            <span class="error">*</span>
+                        </label>
+                        <input type="password" id="passwd2" class="passwd2" size="16" maxlength="30" placeholder="Confirm Password" name="passwd2" value="">
+                    </fieldset>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <?php } ?>
+
+
   </div>
+
   <hr>
   <p class="full-width">
     <span class="buttons pull-left">
-      <input type="reset" value="<?php  echo __('Reset'); ?>" />
+      <input  type="reset" value="<?php  echo __('Reset'); ?>"  <?php if('change-password'==$change_password[2] || 'set-password'==$change_password[2] ){ ?>  id="reset_password"  <?php  } ?> />
       <input type="button" name="cancel" class="close"
         value="<?php echo __('Cancel'); ?>" />
     </span>
     <span class="buttons pull-right">
     
-        <?php if('change-password'==$change_password[2]){ ?>    
+        <?php if('change-password'==$change_password[2] || 'set-password'==$change_password[2] ){ ?>    
           <input type="button" value="Ok" class="setPasswordValue" />
+  
+          <!-- <a id="refresh" href="#" style="display:none"><?php  //echo __('refresh'); ?></a> -->
         <?php  } ?>
-      <input type="submit" value="<?php echo $verb ?: __('Create'); ?>"  <?php if('change-password'==$change_password[2]){ ?> disabled class="updatePassword" <?php } ?> />
+      <input type="submit" value="<?php echo $verb ?: __('Create'); ?>"  <?php if('change-password'==$change_password[2] || 'set-password'==$change_password[2]){ ?> disabled class="updatePassword" <?php } ?> />
     </span>
   </p>
   <div class="clear"></div>
 </form>
 
 <script type="text/javascript">
+
+// $(function(){
+
+//   $(document).on('click','#refresh', function(){
+//     location.reload();
+
+//   });
+
+//   $(document).on('keypress','.passwd1,.passwd2', function(){
+//     var change_password = "<?php // echo $change_password[2]; ?>";
+//     if('set-password'==change_password){
+//             $('.updatePassword').prop('disabled', true);
+//     }
+
+//   });
+
+//   $(document).on('keypress','.current_password,.passwd1,.passwd2', function(){
+//     var change_password = "<?php // echo $change_password[2]; ?>";
+//     if('change-password'==change_password){
+//       $('.updatePassword').prop('disabled', true);
+//     }
+//   })
+// });
+
+$(function(){
+  $(document).on('click','#reset_password', function(){
+    $('.setPasswordValue').show();
+    $('.updatePassword').prop('disabled', true);
+  });
+});
 $(function(){
   $(document).on('click','.setPasswordValue', function(){
     console.log('on change get value feom class current_password=');
-    syncForCurrentPassword();
+    var change_password = "<?php echo $change_password[2]; ?>";
+    if('set-password'!=change_password){
+      syncForCurrentPassword();
+    }
     syncForNewPasswordAndConfirmPassword();
   });
 });
@@ -134,13 +210,27 @@ function syncForNewPasswordAndConfirmPassword()
 
           var confirm_password = $('.passwd2').val(passwd2EncodedData);
           console.log('passwd2EncodedData = '+passwd2EncodedData);
+
+          var change_password = "<?php echo $change_password[2]; ?>";
           
-          if ($('.current_password').val() != '' && $('.passwd1').val() != '' && $('.passwd2').val() != '') {
-                      $('.updatePassword').prop('disabled', false);
-                      // $('.setPasswordValue').hide();
-                  } else {
-                      $('.updatePassword').prop('disabled', true);
-                  }
+               if('set-password'!=change_password){
+                    if ($('.current_password').val() != '' && $('.passwd1').val() != '' && $('.passwd2').val() != '') {
+                        $('.updatePassword').prop('disabled', false);
+                        $('.setPasswordValue').hide();
+                        $('#refresh').show();
+                    } else {
+                        $('.updatePassword').prop('disabled', true);
+                    }
+                }else{
+                  if ($('.passwd1').val() != '' && $('.passwd2').val() != '') {
+                        $('.updatePassword').prop('disabled', false);
+                        $('.setPasswordValue').hide();
+                        $('.refresh').show();
+                    } else {
+                        $('.updatePassword').prop('disabled', true);
+                    }
+                }
+                
           }
           else{
             alert('Passwords do not match');

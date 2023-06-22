@@ -18,7 +18,101 @@ class StaffAjaxAPI extends AjaxController {
    * 403 - Not an administrator
    * 404 - No such agent exists
    */
-  function setPassword($id) {
+
+   function setPassword($id) {
+    global $ost, $thisstaff;
+
+      if (!$thisstaff)
+          Http::response(403, 'Agent login required');
+      if (!$thisstaff->isAdmin())
+          Http::response(403, 'Access denied');
+      if ($id && !($staff = Staff::lookup($id)))
+          Http::response(404, 'No such agent');
+
+        $staff_set_password_custom = $_POST['staff_set_password_custom'];
+
+        if('staff_set_password_custom' == $staff_set_password_custom){
+            $ia= include(INCLUDE_DIR.'staff/db/config.php');
+            session_start();
+            // Set session variables
+            $success_msg = $_SESSION['success'];
+            $error_msg = $_SESSION['error'] = array();
+            $current_password = $_POST['current_password'];
+            $passwd1 = $_POST['passwd1'];
+            $passwd2 = $_POST['passwd2'];
+            $staff_id = $_POST['staff_id'];
+            if(isset($passwd1) && isset($passwd2)){
+            $compare_password = strcmp($passwd1,$passwd2);
+            if($compare_password == 0){
+                $query_select = "SELECT * FROM ost_staff where  staff_id=$staff_id";
+
+                $result = mysqli_query($con, $query_select);
+                if($result){
+        
+                    if( mysqli_num_rows($result) > 0){
+                       
+                        $query_update = "UPDATE ost_staff SET passwd='$passwd1' , change_passwd=1 WHERE staff_id=$staff_id";
+  
+                        $query_update_run = mysqli_query($con,$query_update);
+                        $success_msg = 'Successfully updated';
+                    ?>
+                    <script type="text/javascript">
+                        alert('Successfully updated');
+                        setTimeout(function () {
+                        location.reload();
+                        }, 2000);
+                    </script>
+                    <?php
+                    }else{
+                        $error_msg = 'something wrong.';
+                        ?>
+                        <script type="text/javascript">
+                        alert('something wrong. ');
+                        setTimeout(function () {
+                        location.reload();
+                        }, 2000);
+                    </script>
+                    <?php }
+            
+                }
+           }else{
+            $error = 'Passwords do not match.';
+            ?>
+            <script type="text/javascript">
+            alert('Passwords do not match');
+            setTimeout(function () {
+            location.reload();
+            }, 2000);
+           </script>
+        <?php 
+           }
+         }
+         else{
+            $error = 'All field is require.';
+            ?>
+            <script type="text/javascript">
+            $('.updatePassword').prop('disabled', true);
+           
+            alert('All field is require');
+            setTimeout(function () {
+            location.reload();
+            }, 2000);
+           </script>
+        <?php 
+          }
+        }
+    $form = new PasswordResetForm($_POST);
+    $errors = array();
+
+    
+
+    $title = __("Set Agent Password");
+    $verb = $id == 0 ? __('Set') : __('Update');
+    $path = ltrim(Osticket::get_path_info(), '/');
+
+    include STAFFINC_DIR . 'templates/quick-add.tmpl.php';
+}
+  function setPassword_old($id) {
       global $ost, $thisstaff;
 
       if (!$thisstaff)
@@ -32,9 +126,10 @@ class StaffAjaxAPI extends AjaxController {
       $errors = array();
       if (!$_POST && isset($_SESSION['new-agent-passwd']))
           $form->data($_SESSION['new-agent-passwd']);
-
+        //   echo'<pre>POST_data ='; print_r($_POST);die;
       if ($_POST && $form->isValid()) {
           $clean = $form->getClean();
+        //   echo'<pre>datadis'; print_r();die;
           try {
               // Validate password
               if (!$clean['welcome_email'])
@@ -49,7 +144,9 @@ class StaffAjaxAPI extends AjaxController {
               }
               else {
                   $staff->setPassword($clean['passwd1'], null);
+                            echo'<pre>passwd1 ='.$clean['passwd1'];
                   if ($clean['change_passwd'])
+                               echo'<pre>change_passwd ='.$clean['change_passwd'];die;
                       $staff->change_passwd = 1;
               }
               if ($staff->save())
@@ -89,18 +186,17 @@ class StaffAjaxAPI extends AjaxController {
             $current_password = $_POST['current_password'];
             $passwd1 = $_POST['passwd1'];
             $passwd2 = $_POST['passwd2'];
+            $staff_id = $_POST['staff_id'];
             if(isset($passwd1) && isset($passwd2)){
             $compare_password = strcmp($passwd1,$passwd2);
             if($compare_password == 0){
-                $query_select = "SELECT * FROM ost_staff where passwd = '".$current_password."' ";
+                $query_select = "SELECT * FROM ost_staff where passwd = '$current_password' and  staff_id=$staff_id";
 
                 $result = mysqli_query($con, $query_select);
                 if($result){
         
                     if( mysqli_num_rows($result) > 0){
-        
-                        $passwd1 = $_POST['passwd1'];
-                        $staff_id = $_POST['staff_id'];
+                       
                         $query_update = "UPDATE ost_staff SET passwd='$passwd1' , change_passwd=0 WHERE staff_id=$staff_id";
   
                         $query_update_run = mysqli_query($con,$query_update);
