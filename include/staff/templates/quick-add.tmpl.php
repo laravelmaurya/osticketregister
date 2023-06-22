@@ -69,9 +69,21 @@
         <tbody>
         <tr><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td><td style="width:8.3333%"></td></tr></tbody>
         <tbody>
- 
-            <tr>          
-                <td class="cell" colspan="12" rowspan="1" style="padding-top: 20px" data-field-id="2">
+            <tr>
+              <td class="cell" colspan="12" rowspan="1" style="" data-field-id="1">
+                <fieldset class="field " id="" data-field-id="1">
+                <label class="" for="_e143db0def1e9c">
+                &nbsp;
+                    <label class="checkbox">
+                      <input class="send-agent-password-reset-email" type="checkbox" name="_field-checkboxes[]" checked="checked">
+                      Send the agent a password reset email
+                    </label>
+                </label>
+                </fieldset>
+              </td>
+            </tr>
+            <tr class="set-password-field">          
+                <td class="cell " colspan="12" rowspan="1" style="padding-top: 20px" data-field-id="2">
                     <fieldset class="field " id="field_passwd1" data-field-id="2">
                         <label class="required" for="passwd1">
                             Enter a new password:                                
@@ -81,7 +93,7 @@
                     </fieldset>
                 </td>
             </tr>
-            <tr>          
+            <tr class="set-password-field">          
                 <td class="cell" colspan="12" rowspan="1" style="" data-field-id="3">
                     <fieldset class="field " id="field_passwd2" data-field-id="3">
                         <label class="required" for="passwd2">
@@ -113,7 +125,7 @@
   
           <!-- <a id="refresh" href="#" style="display:none"><?php  //echo __('refresh'); ?></a> -->
         <?php  } ?>
-      <input type="submit" value="<?php echo $verb ?: __('Create'); ?>"  <?php if('change-password'==$change_password[2] || 'set-password'==$change_password[2]){ ?> disabled class="updatePassword" <?php } ?> />
+      <input type="submit" value="<?php echo $verb ?: __('Create'); ?>"  <?php if('change-password'==$change_password[2] || 'set-password'==$change_password[2]){ ?> disabled class="set-password-disable-check updatePassword" <?php } ?> />
     </span>
   </p>
   <div class="clear"></div>
@@ -144,10 +156,57 @@
 //   })
 // });
 
+
+
+$(function(){
+    var change_password = "<?php  echo $change_password[2]; ?>";
+    
+    if('set-password'==change_password){
+    
+      $('.updatePassword').prop('disabled', true);
+
+      $('.set-password-field,.setPasswordValue').hide();
+      $('.send-agent-password-reset-email').val(1);
+      $('.set-password-disable-check').removeClass('updatePassword');
+
+      $('.set-password-disable-check').prop('disabled', false);
+
+      $(document).on('click','.send-agent-password-reset-email', function(){
+              var isChecked = $(this).is(':checked');
+              // Update the checked attribute based on the current state
+              if (isChecked) {
+                
+                    console.log('Checkbox  is checked');
+                    
+                    $(this).prop('checked', true);
+                    $(this).val(1);
+
+                    $('.set-password-field,.setPasswordValue').hide();
+                    $('.updatePassword').prop('disabled',false);
+                    $('.set-password-disable-check').removeClass('updatePassword');
+
+              
+              } else {
+              
+                    // Checkbox 1 is unchecked
+                    console.log('Checkbox  is unchecked');
+                    
+                    $(this).prop('checked', false);
+                    $(this).val(2);
+                    $('.set-password-field,.setPasswordValue').show();
+                    $('.set-password-disable-check').addClass('updatePassword');
+                    // $('.set-password-disable-check').attr('disabled','true');
+                    $('.updatePassword').prop('disabled', true);
+              }
+        });
+     }
+});
+
 $(function(){
   $(document).on('click','#reset_password', function(){
-    $('.setPasswordValue').show();
-    $('.updatePassword').prop('disabled', true);
+    $('.set-password-field,.setPasswordValue').hide();
+      $('.updatePassword').prop('disabled',false);
+      $('.set-password-disable-check').removeClass('updatePassword');
   });
 });
 $(function(){
