@@ -26,7 +26,7 @@
                 <td class="cell" colspan="12" rowspan="1" style="" data-field-id="1">
                     <fieldset class="field " id="field_current_password" data-field-id="1">
                         <label class="required" for="current_password">
-                        Current Password:                                <span class="error">*</span>
+                        Current Password: <span class="error">*</span>
                         </label>
                         <input type="password" id="current_password" autofocus="" class="current_password" size="16" maxlength="30" placeholder="Current Password" name="current_password" value="">
                     </fieldset>
@@ -135,9 +135,9 @@ function syncForNewPasswordAndConfirmPassword()
           var confirm_password = $('.passwd2').val(passwd2EncodedData);
           console.log('passwd2EncodedData = '+passwd2EncodedData);
           
-          if ($('.current_password').val() != '' && $('.current_password').val() != '' && $('.current_password').val() != '') {
+          if ($('.current_password').val() != '' && $('.passwd1').val() != '' && $('.passwd2').val() != '') {
                       $('.updatePassword').prop('disabled', false);
-                      $('.setPasswordValue').hide();
+                      // $('.setPasswordValue').hide();
                   } else {
                       $('.updatePassword').prop('disabled', true);
                   }

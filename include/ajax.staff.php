@@ -82,6 +82,10 @@ class StaffAjaxAPI extends AjaxController {
 
         if('staff_change_password_custom' == $staff_change_password_custom){
             $ia= include(INCLUDE_DIR.'staff/db/config.php');
+            session_start();
+            // Set session variables
+            $success_msg = $_SESSION['success'];
+            $error_msg = $_SESSION['error'] = array();
             $current_password = $_POST['current_password'];
             $passwd1 = $_POST['passwd1'];
             $passwd2 = $_POST['passwd2'];
@@ -97,10 +101,10 @@ class StaffAjaxAPI extends AjaxController {
         
                         $passwd1 = $_POST['passwd1'];
                         $staff_id = $_POST['staff_id'];
-                        $query_update = "UPDATE ost_staff SET passwd='$passwd1' WHERE staff_id=$staff_id";
+                        $query_update = "UPDATE ost_staff SET passwd='$passwd1' , change_passwd=0 WHERE staff_id=$staff_id";
   
                         $query_update_run = mysqli_query($con,$query_update);
-                      
+                        $success_msg = 'Successfully updated';
                     ?>
                     <script type="text/javascript">
                         alert('Successfully updated');
@@ -110,6 +114,7 @@ class StaffAjaxAPI extends AjaxController {
                     </script>
                     <?php
                     }else{
+                        $error_msg = 'Current password is incorrect.';
                         ?>
                         <script type="text/javascript">
                         alert('Current password is incorrect.');
@@ -121,6 +126,7 @@ class StaffAjaxAPI extends AjaxController {
             
                 }
            }else{
+            $error = 'Passwords do not match.';
             ?>
             <script type="text/javascript">
             alert('Passwords do not match');
@@ -132,9 +138,11 @@ class StaffAjaxAPI extends AjaxController {
            }
          }
          else{
+            $error = 'All field is require.';
             ?>
             <script type="text/javascript">
             $('.updatePassword').prop('disabled', true);
+           
             alert('All field is require');
             setTimeout(function () {
             location.reload();
@@ -146,41 +154,7 @@ class StaffAjaxAPI extends AjaxController {
         $form = new PasswordChangeForm($_POST);
         $errors = array();
 
-        if ($_POST && $form->isValid()) {
-            $clean = $form->getClean();
-     
-            if (($rtoken = $_SESSION['_staff']['reset-token'])) {
-                $_config = new Config('pwreset');
-                if ($_config->get($rtoken) != $thisstaff->getId())
-                    $errors['err'] =
-                        __('Invalid reset token. Logout and try again');
-                elseif (!($ts = $_config->lastModified($rtoken))
-                        && ($cfg->getPwResetWindow() < (time() - strtotime($ts))))
-                    $errors['err'] =
-                        __('Invalid reset token. Logout and try again');
-            }
-            if (!$errors) {
-                try {
-                    $thisstaff->setPassword($clean['passwd1'], @$clean['current']);
-                    if ($thisstaff->save()) {
-                        if ($rtoken) {
-                            $thisstaff->cancelResetTokens();
-                            Http::response(200, $this->encode(array(
-                                'redirect' => 'index.php'
-                            )));
-                        }
-                        Http::response(201, 'Successfully updated');
-                    }
-                }
-                catch (BadPassword $ex) {
-                    if ($passwd1 = $form->getField('passwd1'))
-                        $passwd1->addError($ex->getMessage());
-                }
-                catch (PasswordUpdateFailed $ex) {
-                    $errors['err'] = __('Password update failed:').' '.$ex->getMessage();
-                }
-            }
-        }
+        
 
         $title = __("Change Password");
         $verb = __('Update');
