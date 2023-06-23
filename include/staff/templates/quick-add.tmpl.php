@@ -223,10 +223,9 @@ $(function(){
                     console.log('Checkbox  is unchecked');
                     
                     $(this).prop('checked', false);
-                    $(this).val(2);
+                    $(this).val('');
                     $('.set-password-field,.setPasswordValue').show();
                     $('.set-password-disable-check').addClass('updatePassword');
-                    // $('.set-password-disable-check').attr('disabled','true');
                     $('.updatePassword').prop('disabled', true);
               }
         });
@@ -235,9 +234,17 @@ $(function(){
 
 $(function(){
   $(document).on('click','#reset_password', function(){
-    $('.set-password-field,.setPasswordValue').hide();
+    var change_password = "<?php echo $change_password[2]; ?>";
+    if('set-password'==change_password){
+      $('.set-password-field,.setPasswordValue').hide();
       $('.updatePassword').prop('disabled',false);
       $('.set-password-disable-check').removeClass('updatePassword');
+    }else if('change-password'==change_password){
+      $('.set-password-field,.setPasswordValue').show();
+      $('.set-password-disable-check').addClass('updatePassword');
+      $('.updatePassword').prop('disabled', true);
+    }
+
   });
 });
 $(function(){
