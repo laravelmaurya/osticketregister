@@ -19,8 +19,12 @@ if (osTicket::is_ie())
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/wizard.css?30ef1cc"/>
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/flags.css?30ef1cc"/>
+    <!-- css from other sources -->
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/css-from-other-sources/1.1.3_sweetalert.min.css"/>
     <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/jquery-3.6.3.min.js?30ef1cc"></script>
-    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/md5.js"></script>     
+    <!-- js from other sources -->
+    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/md5.js"></script> 
+    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/js-from-other-sources/2.1.2_sweetalert.min.js"></script> 
 </head>
 <body>
     <div id="wizard">

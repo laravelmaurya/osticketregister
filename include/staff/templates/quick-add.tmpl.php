@@ -34,6 +34,7 @@
                         Current Password: <span class="error">*</span>
                         </label>
                         <input type="password" id="current_password" autofocus="" class="current_password" size="16" maxlength="30" placeholder="Current Password" name="current_password" value="">
+                        <span class="current_new_password" style="display: none;"></span>
                     </fieldset>
                 </td>
             </tr>
@@ -45,6 +46,7 @@
                             <span class="error">*</span>
                         </label>
                         <input type="password" id="passwd1" class="passwd1" size="16" maxlength="30" placeholder="New Password" name="passwd1" value="">
+                        <span class="error_new_password" style="display: none;"></span>
                     </fieldset>
                 </td>
             </tr>
@@ -56,6 +58,8 @@
                             <span class="error">*</span>
                         </label>
                         <input type="password" id="passwd2" class="passwd2" size="16" maxlength="30" placeholder="Confirm Password" name="passwd2" value="">
+                        <span class="error_confirm_password" style="display: none;"></span>
+                        <span class="error_match_password" style="display: none;"></span>
                     </fieldset>
                 </td>
             </tr>
@@ -90,6 +94,8 @@
                             <span class="error">*</span>
                         </label>
                         <input type="password" id="passwd1" class="passwd1" size="16" maxlength="30" placeholder="New Password" name="passwd1" value="">
+                        <span class="error_new_password" style="display: none;"></span>
+               
                     </fieldset>
                 </td>
             </tr>
@@ -101,6 +107,8 @@
                             <span class="error">*</span>
                         </label>
                         <input type="password" id="passwd2" class="passwd2" size="16" maxlength="30" placeholder="Confirm Password" name="passwd2" value="">
+                        <span class="error_confirm_password" style="display: none;"></span>
+                        <span class="error_match_password" style="display: none;"></span>
                     </fieldset>
                 </td>
             </tr>
@@ -276,10 +284,7 @@ function syncForCurrentPassword()
 
     }
     else{
-      alert('current passwords field is require');
-      setTimeout(function () {
-        location.reload();
-      }, 2000);
+      $('.current_new_password').show().text('Passwords do not match').css('color', 'red');
    }
 }
 function syncForNewPasswordAndConfirmPassword()
@@ -289,7 +294,8 @@ function syncForNewPasswordAndConfirmPassword()
     var passwd2 = $('.passwd2').val();
     const compareValue = passwd1.localeCompare(passwd2)
 
-    if(passwd1!='' && passwd2!=''){
+    if(passwd1!=''){
+    if(passwd2!=''){
           if(compareValue==0){
 
           const encoder = new TextEncoder();
@@ -328,21 +334,19 @@ function syncForNewPasswordAndConfirmPassword()
                         $('.updatePassword').prop('disabled', true);
                     }
                 }
-                
+                $('.error_match_password').hide();
+                $('.error_confirm_password').hide();
+                $('.error_new_password').hide();
           }
           else{
-            alert('Passwords do not match');
-            setTimeout(function () {
-              location.reload();
-            }, 2000);
+            $('.error_match_password').show().text('Passwords do not match').css('color', 'red');
           }
       }else{
-            alert('New password and Confirm Password  field is require');
-            setTimeout(function () {
-              location.reload();
-            }, 2000);
+        $('.error_confirm_password').show().text('Confirm password field is require').css('color', 'red');
        }
-
+      }else{       
+        $('.error_new_password').show().text('New password field is require').css('color', 'red');
+       }
 }
 
 </script>

@@ -175,7 +175,24 @@ class StaffAjaxAPI extends AjaxController {
         if (!$id || $thisstaff->getId() != $id)
             Http::response(404, 'No such agent');
 
-            $staff_change_password_custom = $_POST['staff_change_password_custom'];
+            $form = new PasswordChangeForm($_POST);
+            $errors = array();
+
+            if ($_POST && $form->isValid()) {
+                $clean = $form->getClean();
+                if (($rtoken = $_SESSION['_staff']['reset-token'])) {
+                    $_config = new Config('pwreset');
+                    if ($_config->get($rtoken) != $thisstaff->getId())
+                        $errors['err'] =
+                            __('Invalid reset token. Logout and try again');
+                    elseif (!($ts = $_config->lastModified($rtoken))
+                            && ($cfg->getPwResetWindow() < (time() - strtotime($ts))))
+                        $errors['err'] =
+                            __('Invalid reset token. Logout and try again');
+                }
+            }
+
+        $staff_change_password_custom = $_POST['staff_change_password_custom'];
 
         if('staff_change_password_custom' == $staff_change_password_custom){
             $ia= include(INCLUDE_DIR.'staff/db/config.php');
@@ -247,9 +264,7 @@ class StaffAjaxAPI extends AjaxController {
         <?php 
           }
         }
-        $form = new PasswordChangeForm($_POST);
-        $errors = array();
-
+      
         
 
         $title = __("Change Password");
@@ -258,7 +273,7 @@ class StaffAjaxAPI extends AjaxController {
 
         include STAFFINC_DIR . 'templates/quick-add.tmpl.php';
     }
-
+   
     function getAgentPerms($id) {
         global $thisstaff;
 

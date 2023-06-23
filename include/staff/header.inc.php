@@ -50,10 +50,18 @@ if (osTicket::is_ie())
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/select2.min.css?30ef1cc"/>
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/rtl.css?30ef1cc"/>
     <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH ?>scp/css/translatable.css?30ef1cc"/>
+
+    <!-- css from other sources -->
+    <link type="text/css" rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/css-from-other-sources/1.1.3_sweetalert.min.css"/>
+
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="<?php echo ROOT_PATH ?>images/oscar-favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="<?php echo ROOT_PATH ?>images/oscar-favicon-16x16.png" sizes="16x16" />
+
+    <!-- js from other sources -->
     <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/md5.js"></script>
+    <script type="text/javascript" src="<?php echo ROOT_PATH; ?>js/js-from-other-sources/2.1.2_sweetalert.min.js"></script> 
+    
     <?php
     if($ost && ($headers=$ost->getExtraHeaders())) {
         echo "\n\t".implode("\n\t", $headers)."\n";
