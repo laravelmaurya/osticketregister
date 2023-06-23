@@ -112,7 +112,7 @@ class StaffAjaxAPI extends AjaxController {
 
     include STAFFINC_DIR . 'templates/quick-add.tmpl.php';
 }
-  function setPassword_old($id) {
+  function setPassworda($id) {
       global $ost, $thisstaff;
 
       if (!$thisstaff)
@@ -129,7 +129,7 @@ class StaffAjaxAPI extends AjaxController {
         //   echo'<pre>POST_data ='; print_r($_POST);die;
       if ($_POST && $form->isValid()) {
           $clean = $form->getClean();
-        //   echo'<pre>datadis'; print_r();die;
+        //   echo'<pre>post ='; print_r($_POST);die;
           try {
               // Validate password
               if (!$clean['welcome_email'])
@@ -144,9 +144,9 @@ class StaffAjaxAPI extends AjaxController {
               }
               else {
                   $staff->setPassword($clean['passwd1'], null);
-                            echo'<pre>passwd1 ='.$clean['passwd1'];
+                            // echo'<pre>passwd1 ='.$clean['passwd1'];
                   if ($clean['change_passwd'])
-                               echo'<pre>change_passwd ='.$clean['change_passwd'];die;
+                            //    echo'<pre>change_passwd ='.$clean['change_passwd'];die;
                       $staff->change_passwd = 1;
               }
               if ($staff->save())

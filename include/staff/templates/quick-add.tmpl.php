@@ -104,6 +104,18 @@
                     </fieldset>
                 </td>
             </tr>
+            
+            <tr class="set-password-field">        
+                <td class="cell" colspan="12" rowspan="1" style="" data-field-id="4">
+                    <fieldset class="field hidden" id="field_57e4f1a3ab2bb4" data-field-id="4" style="display: block;">
+                            <label class="checkbox form footer">
+                                <input id="_57e4f1a3ab2bb4" class="require_password_change_at_next_login" type="checkbox" name="_field-checkboxes[]" checked="checked" value="4">
+                                Require password change at next login        
+                            </label>
+                    </fieldset>
+                </td>
+            </tr>
+
         </tbody>
     </table>
     <?php } ?>
@@ -156,6 +168,25 @@
 //   })
 // });
 
+$(function(){
+    var change_password = "<?php  echo $change_password[2]; ?>";
+    
+    if('set-password'==change_password){
+
+      $(document).on('click','.require_password_change_at_next_login', function(){
+              var isChecked = $(this).is(':checked');
+              // Update the checked attribute based on the current state
+              if (isChecked) {
+                    console.log('Checkbox  is checked');
+                    $(this).val(4);
+              } else {              
+                    // Checkbox 1 is unchecked
+                    console.log('Checkbox  is unchecked');
+                    $(this).val('');
+              }
+        });
+     }
+});
 
 
 $(function(){
@@ -214,6 +245,7 @@ $(function(){
     console.log('on change get value feom class current_password=');
     var change_password = "<?php echo $change_password[2]; ?>";
     if('set-password'!=change_password){
+      // alert('syncForCurrentPassword=');
       syncForCurrentPassword();
     }
     syncForNewPasswordAndConfirmPassword();
