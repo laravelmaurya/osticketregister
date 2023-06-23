@@ -19,7 +19,7 @@ class StaffAjaxAPI extends AjaxController {
    * 404 - No such agent exists
    */
 
-   function setPassword($id) {
+   function setPasswordb($id) {
     global $ost, $thisstaff;
 
       if (!$thisstaff)
@@ -112,7 +112,7 @@ class StaffAjaxAPI extends AjaxController {
 
     include STAFFINC_DIR . 'templates/quick-add.tmpl.php';
 }
-  function setPassworda($id) {
+  function setPassword($id) {
       global $ost, $thisstaff;
 
       if (!$thisstaff)
